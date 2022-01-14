@@ -1,15 +1,14 @@
 const {client} = require("./utils/client");
-const {TodoRepository} = require("./repositories/todo.repository");
+const {TodoRecord} = require("./records/todo.record");
 
 (async () => {
     try {
-        // await TodoRepository.insert(todo);
-        // console.log(todo);
-        // console.log(await TodoRepository.findAll());
-        const todo = await TodoRepository.find('61deb6a73c28c4e0435b78de');
-        todo.title = "test blablabla";
-        await TodoRepository.update(todo);
-        console.log(await TodoRepository.find('61deb6a73c28c4e0435b78de'));
+        for await (const todo of await TodoRecord.findAllWithCursor()) {
+            const record = new TodoRecord(todo);
+            record.title += 'cycki';
+            await record.update();
+            console.log(await TodoRecord.findAll());
+        }
     } finally {
         await client.close();
     }
